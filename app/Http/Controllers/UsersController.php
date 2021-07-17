@@ -9,6 +9,7 @@ use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Users;
 use App\Models\Permission;
 use Flash;
 use Response;
@@ -33,10 +34,15 @@ class UsersController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $users = $this->usersRepository->all();
+        if (auth()->user()->can('view user')) {
+            $users = $this->usersRepository->all();
 
-        return view('users.index')
-            ->with('users', $users);
+            return view('users.index')
+                ->with('users', $users);
+        } else {
+            abort(403);
+        }
+        
     }
 
     /**
@@ -46,7 +52,11 @@ class UsersController extends AppBaseController
      */
     public function create()
     {
-        return view('users.create');
+        if (auth()->user()->can('create user')) {
+            return view('users.create');
+        } else {
+            abort(403);
+        }        
     }
 
     /**
@@ -78,13 +88,17 @@ class UsersController extends AppBaseController
     {
         $users = $this->usersRepository->find($id);
 
+        $userModel = User::find($id);
+
+        $userPermissions = $userModel->getAllPermissions();
+
         if (empty($users)) {
             Flash::error('Users not found');
 
             return redirect(route('users.index'));
         }
 
-        return view('users.show')->with('users', $users);
+        return view('users.show', ['users' => $users, 'permissions' => $userPermissions]);
     }
 
     /**
@@ -169,9 +183,9 @@ class UsersController extends AppBaseController
     public function createUserRoles(Request $request) {
         $user = User::find($request->userId);
 
-        $user->syncRoles($request->input('roles',[]));
+        // $user->syncRoles($request->input('roles', []));
 
-        return redirect(route('users.add_user_permissions', ['id' => $user->id]));
+        return redirect(route('users.add_user_permissions', ['id' => $user->id, 'roles' => $request->input('roles', [])]));
     }
 
     public function addUserPermissions($id) {
@@ -180,5 +194,30 @@ class UsersController extends AppBaseController
         $permissions = Permission::all();
 
         return view('users.add_user_permissions', ['user' => $user, 'permissions' => $permissions]);
+    }
+
+    public function createUserPermissions(Request $request) {
+        $user = User::find($request->userId);
+
+        $user->syncPermissions($request->input('permissions', []));
+
+        return redirect('users/' . $request->userId);
+    }
+
+    public function removePermission($id, $permission) {
+        $user = User::find($id);
+
+        $user->revokePermissionTo($permission);
+
+        return redirect('users/' . $id);
+    }
+
+    public function clearRoles($id) {
+        $user = User::find($id);
+
+        $user->syncRoles([]);
+        $user->syncPermissions([]);
+
+        return redirect('users/' . $id);
     }
 }

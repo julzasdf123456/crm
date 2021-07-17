@@ -14,9 +14,7 @@
           rel="stylesheet">
           
     <!-- AdminLTE -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.0.5/css/adminlte.min.css"
-          integrity="sha512-rVZC4rf0Piwtw/LsgwXxKXzWq3L0P6atiQKBNuXYRbg2FoRbSTIY0k2DxuJcs7dk4e/ShtMzglHKBOJxW8EQyQ=="
-          crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://adminlte.io/themes/v3/dist/css/adminlte.min.css"/>
 
     <!-- iCheck -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.min.css"
@@ -32,7 +30,7 @@
           integrity="sha512-aEe/ZxePawj0+G2R+AaIxgrQuKT68I28qh+wgLrcAJOz3rxCP+TwrK5SPN+E5I+1IQjNtcfvb96HDagwrKRdBw=="
           crossorigin="anonymous"/>
 
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
 
     <style>
         .divider {
@@ -121,24 +119,23 @@
     </footer>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
         integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
-        crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script> -->
+<!-- jQuery -->
+<script src="https://adminlte.io/themes/v3/plugins/jquery/jquery.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
         integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" 
         crossorigin="anonymous"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
-        integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" 
-        crossorigin="anonymous"></script>
+<script src="https://adminlte.io/themes/v3/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
         
 <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
 
+
 <!-- AdminLTE App -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.0.5/js/adminlte.min.js"
-        integrity="sha512-++c7zGcm18AhH83pOIETVReg0dr1Yn8XTRw+0bWSIWAVCAwz1s2PwnSj4z/OOyKlwSXc4RLg3nnjR22q0dhEyA=="
-        crossorigin="anonymous"></script>
+<script src="https://adminlte.io/themes/v3/dist/js/adminlte.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"
         integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg=="
@@ -164,6 +161,77 @@
     $("input[data-bootstrap-switch]").each(function(){
         $(this).bootstrapSwitch('state', $(this).prop('checked'));
     });
+
+        /** add active class and stay opened when selected */
+    var url = window.location;
+
+    // for sidebar menu entirely but not cover treeview
+    $('ul.nav-sidebar a').filter(function() {
+        return this.href == url;
+    }).addClass('active');
+
+    // for treeview
+    $('ul.nav-treeview a').filter(function() {
+        return this.href == url;
+    }).parentsUntil(".nav-sidebar > .nav-treeview").addClass('menu-open').prev('a').addClass('active');
+
+    // APPLICATION JS
+    $(document).ready(function() {
+        /**
+         * MEMBERSHIP RELATED SCRIPTS
+         */
+
+         /**
+          * Initialize Juridical fields
+          */
+        if ($('#MembershipType option:selected').text() == 'Juridical') {
+            $('#OrgranizationNameModule').show();
+            $('#NonJuridicals').hide();
+        } else {
+            $('#OrgranizationNameModule').hide();
+            $('#NonJuridicals').show();
+        }
+
+        $('#MembershipType').on('change', function() {
+            if ($('#MembershipType option:selected').text() == 'Juridical') {
+                $('#OrgranizationNameModule').show();
+                $('#NonJuridicals').hide();
+            } else {
+                $('#OrgranizationNameModule').hide();
+                $('#NonJuridicals').show();
+            }
+        });
+
+        /**
+         * TOWN CHANGE
+         */
+        fetchBarangayFromTown($('#Town').val(), $('#Def_Brgy').text());
+
+        $('#Town').on('change', function() {
+            fetchBarangayFromTown(this.value, $('#Def_Brgy').text());
+        });
+    });
+
+    /**
+     * FUNCTIONS
+     */
+    function fetchBarangayFromTown(townId, prevValue) {
+        $.ajax({
+            url : '/barangays/get-barangays-json/' + townId,
+            type: "GET",
+            dataType : "json",
+            success : function(data) {
+                $('#Barangay option').remove();
+                $.each(data, function(index, element) {
+                    $('#Barangay').append("<option value='" + element + "' " + (element==prevValue ? "selected='selected'" : " ") + ">" + index + "</option>");
+                });
+            },
+            error : function(error) {
+                alert(error);
+            }
+
+        });
+    }
 </script>
 
 @yield('third_party_scripts')

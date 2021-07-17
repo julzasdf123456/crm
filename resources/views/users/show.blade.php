@@ -36,12 +36,56 @@
                     <div class="card-header">
                         <span><i class="fas fa-fingerprint ico-tab"></i>Permissions Allowed</span>
                         <div class="card-tools">
-                            <a href="{{ url('/users/add-user-roles/' . $users->id) }}" title="Edit Permissions" class="btn btn-sm btn-link"><i class="fas fa-key"></i></a>
+                            
                         </div>
                     </div>
 
                     <div class="card-body">
-                        
+                        <div class="row">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card">
+                                    <div class="card-header border-0">
+                                        <span>CRM</span>
+                                        <div class="card-tools">
+                                            <a href="{{ url('/users/add-user-roles/' . $users->id) }}" title="Edit Permissions" class="btn btn-sm btn-link"><i class="fas fa-key"></i></a>
+                                            <a href="{{ route('users.remove_roles', ['id' => $users->id]) }}" class="btn btn-tool btn-sm" title="Clear all permissions">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                            
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body table-responsive p-0">
+                                    @if ($permissions != null) 
+                                        <table class="table table-striped table-valign-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th>Permissions</th>
+                                                    <th width="10"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach($permissions as $permission) 
+                                                <tr>
+                                                    <td>{{ $permission->name }}</td>
+                                                    <td>
+                                                        <a href="{{ route('users.remove_permission', ['id' => $users->id, 'permission' => $permission->name]) }}" class="btn btn-link btn-xs text-danger" title="Remove permission">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                        
+                                    @else 
+                                        <p>No Permissions Set</p>
+                                    @endif
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
