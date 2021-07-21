@@ -7,41 +7,36 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * Class MemberConsumers
+ * Class MemberConsumerSpouse
  * @package App\Models
- * @version July 16, 2021, 2:01 am UTC
+ * @version July 17, 2021, 1:46 am UTC
  *
- * @property string $MembershipType
+ * @property string $MemberConsumerId
  * @property string $FirstName
  * @property string $MiddleName
  * @property string $LastName
  * @property string $Suffix
- * @property string $OrganizationName
+ * @property string $Gender
  * @property string $Birthdate
  * @property string $Sitio
  * @property string $Barangay
  * @property string $Town
  * @property string $ContactNumbers
  * @property string $EmailAddress
- * @property string $DateApplied
- * @property string $DateOfPMS
- * @property string $DateApproved
- * @property string $CivilStatus
  * @property string $Religion
  * @property string $Citizenship
- * @property string $ApplicationStatus
  * @property string $Notes
  * @property string $Trashed
  */
-class MemberConsumers extends Model
+class MemberConsumerSpouse extends Model
 {
     // use SoftDeletes;
 
     use HasFactory;
 
-    public $table = 'CRM_MemberConsumers';
+    public $table = 'CRM_MemberConsumerSpouse';
 
-    protected $primaryKey = 'Id';
+    protected $primaryKey = 'id';
 
     public $incrementing = false;
     
@@ -52,15 +47,13 @@ class MemberConsumers extends Model
     protected $dates = ['deleted_at'];
 
 
-
     public $fillable = [
-        'Id',
-        'MembershipType',
+        'id',
+        'MemberConsumerId',
         'FirstName',
         'MiddleName',
         'LastName',
         'Suffix',
-        'OrganizationName',
         'Gender',
         'Birthdate',
         'Sitio',
@@ -68,13 +61,8 @@ class MemberConsumers extends Model
         'Town',
         'ContactNumbers',
         'EmailAddress',
-        'DateApplied',
-        'DateOfPMS',
-        'DateApproved',
-        'CivilStatus',
         'Religion',
         'Citizenship',
-        'ApplicationStatus',
         'Notes',
         'Trashed'
     ];
@@ -85,13 +73,12 @@ class MemberConsumers extends Model
      * @var array
      */
     protected $casts = [
-        'Id' => 'string',
-        'MembershipType' => 'string',
+        'id' => 'string',
+        'MemberConsumerId' => 'string',
         'FirstName' => 'string',
         'MiddleName' => 'string',
         'LastName' => 'string',
         'Suffix' => 'string',
-        'OrganizationName' => 'string',
         'Gender' => 'string',
         'Birthdate' => 'date',
         'Sitio' => 'string',
@@ -99,13 +86,8 @@ class MemberConsumers extends Model
         'Town' => 'string',
         'ContactNumbers' => 'string',
         'EmailAddress' => 'string',
-        'DateApplied' => 'date',
-        'DateOfPMS' => 'date',
-        'DateApproved' => 'date',
-        'CivilStatus' => 'string',
         'Religion' => 'string',
         'Citizenship' => 'string',
-        'ApplicationStatus' => 'string',
         'Notes' => 'string',
         'Trashed' => 'string'
     ];
@@ -116,38 +98,26 @@ class MemberConsumers extends Model
      * @var array
      */
     public static $rules = [
-        'Id' => 'string',
-        'MembershipType' => 'required|string|max:255',
+        'id' => 'required|string',
+        'MemberConsumerId' => 'nullable|string|max:300',
         'FirstName' => 'nullable|string|max:300',
         'MiddleName' => 'nullable|string|max:300',
         'LastName' => 'nullable|string|max:300',
         'Suffix' => 'nullable|string|max:50',
         'Gender' => 'nullable|string|max:50',
-        'OrganizationName' => 'nullable|string|max:1000',
         'Birthdate' => 'nullable',
         'Sitio' => 'nullable|string|max:1000',
         'Barangay' => 'nullable|string|max:50',
         'Town' => 'nullable|string|max:50',
         'ContactNumbers' => 'nullable|string|max:300',
         'EmailAddress' => 'nullable|string|max:300',
-        'DateApplied' => 'nullable',
-        'DateOfPMS' => 'nullable',
-        'DateApproved' => 'nullable',
-        'CivilStatus' => 'nullable|string|max:255',
         'Religion' => 'nullable|string|max:255',
         'Citizenship' => 'nullable|string|max:255',
-        'ApplicationStatus' => 'nullable|string|max:255',
         'Notes' => 'nullable|string|max:2000',
         'Trashed' => 'nullable|string|max:5',
         'created_at' => 'nullable',
         'updated_at' => 'nullable'
     ];
 
-    public static function serializeMemberName($memberconsumer) {
-        if ($memberconsumer->MembershipType == '1626404083011') { // GET ID OF THE DESIRED JURIDICAL TYPE
-            return $memberconsumer->OrganizationName;
-        } else {
-            return $memberconsumer->FirstName . ' ' . $memberconsumer->LastName . ' ' . $memberconsumer->Suffix;
-        }
-    }
+    
 }

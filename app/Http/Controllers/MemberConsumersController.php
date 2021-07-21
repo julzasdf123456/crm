@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\IDGenerator;
 use App\Models\Barangays;
 use App\Models\Towns;
+use Illuminate\Support\Facades\DB;
 use Flash;
 use Response;
 
@@ -75,7 +76,11 @@ class MemberConsumersController extends AppBaseController
 
         Flash::success('Member Consumers saved successfully.');
 
-        return redirect(route('memberConsumers.index'));
+        if ($input['CivilStatus'] == 'Married') {
+            return redirect(route('memberConsumerSpouses.create', [$input['Id']]));
+        } else {
+            return redirect(route('memberConsumers.index'));
+        }
     }
 
     /**
@@ -87,15 +92,47 @@ class MemberConsumersController extends AppBaseController
      */
     public function show($id)
     {
-        $memberConsumers = $this->memberConsumersRepository->find($id);
+        $memberConsumers = DB::table('CRM_MemberConsumers')
+                            ->join('CRM_MemberConsumerTypes', 'CRM_MemberConsumers.MembershipType', '=', 'CRM_MemberConsumerTypes.Id')
+                            ->join('CRM_Barangays', 'CRM_MemberConsumers.Barangay', '=', 'CRM_Barangays.id')
+                            ->join('CRM_Towns', 'CRM_MemberConsumers.Town', '=', 'CRM_Towns.id')
+                            ->select('CRM_MemberConsumers.Id as ConsumerId',
+                                    'CRM_MemberConsumers.MembershipType as MembershipType', 
+                                    'CRM_MemberConsumers.FirstName as FirstName', 
+                                    'CRM_MemberConsumers.MiddleName as MiddleName', 
+                                    'CRM_MemberConsumers.LastName as LastName', 
+                                    'CRM_MemberConsumers.OrganizationName as OrganizationName', 
+                                    'CRM_MemberConsumers.Suffix as Suffix', 
+                                    'CRM_MemberConsumers.Birthdate as Birthdate', 
+                                    'CRM_MemberConsumers.Barangay as Barangay', 
+                                    'CRM_MemberConsumers.ApplicationStatus as ApplicationStatus',
+                                    'CRM_MemberConsumers.DateApplied as DateApplied', 
+                                    'CRM_MemberConsumers.CivilStatus as CivilStatus', 
+                                    'CRM_MemberConsumers.DateApproved as DateApproved', 
+                                    'CRM_MemberConsumers.ContactNumbers as ContactNumbers', 
+                                    'CRM_MemberConsumers.EmailAddress as EmailAddress',  
+                                    'CRM_MemberConsumers.Notes as Notes', 
+                                    'CRM_MemberConsumers.Gender as Gender', 
+                                    'CRM_MemberConsumers.Sitio as Sitio', 
+                                    'CRM_MemberConsumerTypes.*',
+                                    'CRM_Towns.Town as Town',
+                                    'CRM_Barangays.Barangay as Barangay')
+                            ->where('CRM_MemberConsumers.Id', $id)
+                            ->first();
+
+        $memberConsumerSpouse = DB::table('CRM_MemberConsumerSpouse')
+                            ->join('CRM_MemberConsumers', 'CRM_MemberConsumerSpouse.MemberConsumerId', '=', 'CRM_MemberConsumers.id')
+                            ->select('CRM_MemberConsumerSpouse.*')
+                            ->where('CRM_MemberConsumerSpouse.MemberConsumerId', $id)
+                            ->first();
 
         if (empty($memberConsumers)) {
             Flash::error('Member Consumers not found');
 
             return redirect(route('memberConsumers.index'));
         }
-
-        return view('member_consumers.show')->with('memberConsumers', $memberConsumers);
+        
+        return view('member_consumers.show', ['memberConsumers' => $memberConsumers, 'memberConsumerSpouse' => $memberConsumerSpouse]);
     }
 
     /**
@@ -148,7 +185,7 @@ class MemberConsumersController extends AppBaseController
 
         Flash::success('Member Consumers updated successfully.');
 
-        return redirect(route('memberConsumers.index'));
+        return redirect(route('memberConsumers.show', [$id]));
     }
 
     /**
