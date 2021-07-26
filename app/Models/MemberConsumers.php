@@ -150,4 +150,12 @@ class MemberConsumers extends Model
             return $memberconsumer->FirstName . ' ' . $memberconsumer->LastName . ' ' . $memberconsumer->Suffix;
         }
     }
+
+    public static function serializeMemberNameFormal($memberconsumer) {
+        if ($memberconsumer->MembershipType == '1626404083011') { // GET ID OF THE DESIRED JURIDICAL TYPE
+            return $memberconsumer->OrganizationName;
+        } else {
+            return $memberconsumer->LastName . ', ' . $memberconsumer->FirstName . ' ' . $memberconsumer->Suffix;
+        }
+    }
 }

@@ -210,6 +210,11 @@
         $('#Town').on('change', function() {
             fetchBarangayFromTown(this.value, $('#Def_Brgy').text());
         });
+
+        /**
+         * SERVICE CONNECTION SCRIPTS
+         */
+        $('#organizationNo').hide();
     });
 
     /**

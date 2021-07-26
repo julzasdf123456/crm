@@ -26,6 +26,54 @@
     
 @endcanany
 
+<!-- SERVICE CONNECTION MENU -->
+@canany(['Super Admin', 'sc view'])
+    <li class="nav-item has-treeview">
+        <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-plug"></i>
+            <p>
+                Service Connections
+                <i class="fas fa-angle-left right"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ route('serviceConnections.index') }}"
+                class="nav-link {{ Request::is('serviceConnections*') ? 'active' : '' }}">
+                    <i class="fas fa-bolt nav-icon"></i>
+                    <p>All Applications</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('serviceConnections.selectmembership') }}"
+                class="nav-link {{ Request::is('serviceConnections.selectmembership') ? 'active' : '' }}">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p>New Application</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-cogs nav-icon"></i>
+                    <p>
+                        Settings
+                        <i class="fas fa-angle-left right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview" style="display: none;">
+                    <li class="nav-item">
+                        <a href="{{ route('serviceConnectionAccountTypes.index') }}"
+                        class="nav-link {{ Request::is('serviceConnectionAccountTypes*') ? 'active' : '' }}">
+                        <i class="fas fa-code-branch nav-icon"></i><p>Account Types</p>
+                        </a>
+                    </li>
+                </ul>
+              </li>
+        </ul>
+    </li>
+@endcanany
+
 <!-- EXTRAS MENU -->
 @canany(['Super Admin', 'view membership', 'view complains', 'view service connections'])
     <li class="nav-item has-treeview">
@@ -90,5 +138,4 @@
         </ul>
     </li>
 @endcan
-
 
