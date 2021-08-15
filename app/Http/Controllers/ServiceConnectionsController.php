@@ -11,6 +11,7 @@ use App\Models\MemberConsumers;
 use App\Models\Towns;
 use App\Models\ServiceConnectionAccountTypes;
 use App\Models\ServiceConnections;
+use App\Models\ServiceConnectionInspections;
 use Illuminate\Support\Facades\DB;
 use Flash;
 use Response;
@@ -78,7 +79,31 @@ class ServiceConnectionsController extends AppBaseController
      */
     public function show($id)
     {
-        $serviceConnections = $this->serviceConnectionsRepository->find($id);
+        $serviceConnections = DB::table('CRM_ServiceConnections')
+        ->join('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+        ->join('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+        ->join('CRM_ServiceConnectionAccountTypes', 'CRM_ServiceConnections.AccountType', '=', 'CRM_ServiceConnectionAccountTypes.id')
+        ->select('CRM_ServiceConnections.id as id',
+                        'CRM_ServiceConnections.AccountCount as AccountCount', 
+                        'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                        'CRM_ServiceConnections.DateOfApplication as DateOfApplication', 
+                        'CRM_ServiceConnections.ContactNumber as ContactNumber', 
+                        'CRM_ServiceConnections.EmailAddress as EmailAddress',  
+                        'CRM_ServiceConnections.AccountApplicationType as AccountApplicationType', 
+                        'CRM_ServiceConnections.AccountOrganization as AccountOrganization', 
+                        'CRM_ServiceConnections.AccountApplicationType as AccountApplicationType', 
+                        'CRM_ServiceConnections.ConnectionApplicationType as ConnectionApplicationType',
+                        'CRM_ServiceConnections.MemberConsumerId as MemberConsumerId',
+                        'CRM_ServiceConnections.Status as Status',  
+                        'CRM_ServiceConnections.Notes as Notes', 
+                        'CRM_ServiceConnections.Sitio as Sitio', 
+                        'CRM_Towns.Town as Town',
+                        'CRM_Barangays.Barangay as Barangay',
+                        'CRM_ServiceConnectionAccountTypes.AccountType as AccountType')
+        ->where('CRM_ServiceConnections.id', $id)
+        ->first(); 
+
+        $serviceConnectionInspections = ServiceConnectionInspections::where('ServiceConnectionId', $id)->first();
 
         if (empty($serviceConnections)) {
             Flash::error('Service Connections not found');
@@ -86,7 +111,7 @@ class ServiceConnectionsController extends AppBaseController
             return redirect(route('serviceConnections.index'));
         }
 
-        return view('service_connections.show')->with('serviceConnections', $serviceConnections);
+        return view('service_connections.show', ['serviceConnections' => $serviceConnections, 'serviceConnectionInspections' => $serviceConnectionInspections]);
     }
 
     /**
@@ -100,13 +125,21 @@ class ServiceConnectionsController extends AppBaseController
     {
         $serviceConnections = $this->serviceConnectionsRepository->find($id);
 
+        $cond = 'edit';
+
+        $towns = Towns::orderBy('Town')->pluck('Town', 'id');
+
+        $memberConsumer = null;
+
+        $accountTypes = ServiceConnectionAccountTypes::orderBy('id')->pluck('AccountType', 'id');
+
         if (empty($serviceConnections)) {
             Flash::error('Service Connections not found');
 
             return redirect(route('serviceConnections.index'));
         }
 
-        return view('service_connections.edit')->with('serviceConnections', $serviceConnections);
+        return view('service_connections.edit', ['serviceConnections' => $serviceConnections, 'cond' => $cond, 'towns' => $towns, 'memberConsumer' => $memberConsumer, 'accountTypes' => $accountTypes]);
     }
 
     /**
@@ -131,7 +164,8 @@ class ServiceConnectionsController extends AppBaseController
 
         Flash::success('Service Connections updated successfully.');
 
-        return redirect(route('serviceConnections.index'));
+        // return redirect(route('serviceConnections.index'));
+        return redirect()->action([ServiceConnectionsController::class, 'show'], [$id]);
     }
 
     /**

@@ -76,3 +76,7 @@ Route::resource('serviceConnectionAccountTypes', App\Http\Controllers\ServiceCon
 
 Route::get('/service_connection_inspections/create_step_two/{scId}', [App\Http\Controllers\ServiceConnectionInspectionsController::class, 'createStepTwo'])->name('serviceConnectionInspections.create-step-two');
 Route::resource('serviceConnectionInspections', App\Http\Controllers\ServiceConnectionInspectionsController::class);
+
+
+Route::get('/service_connection_mtr_trnsfrmrs/create_step_three/{scId}', [App\Http\Controllers\ServiceConnectionMtrTrnsfrmrController::class, 'createStepThree'])->name('serviceConnectionMtrTrnsfrmrs.create-step-three');
+Route::resource('serviceConnectionMtrTrnsfrmrs', App\Http\Controllers\ServiceConnectionMtrTrnsfrmrController::class);

@@ -134,4 +134,24 @@ class ServiceConnections extends Model
             return count($sc);
         }
     }
+
+    public static function getContactInfo($serviceConnections) {
+        if ($serviceConnections->ContactNumber==null && $serviceConnections->EmailAddress==null) {
+            return 'not specified';
+        } elseif ($serviceConnections->ContactNumber==null && $serviceConnections->EmailAddress!=null) {
+            return $serviceConnections->EmailAddress;
+        } elseif ($serviceConnections->ContactNumber!=null && $serviceConnections->EmailAddress==null) {
+            return $serviceConnections->ContactNumber;
+        } else {
+            return $serviceConnections->ContactNumber . ' | ' . $serviceConnections->EmailAddress;
+        }
+    }
+
+    public static function getAddress($serviceConnections) {
+        if ($serviceConnections->Sitio==null && ($serviceConnections->Barangay!=null && $serviceConnections->Town!=null)) {
+            return $serviceConnections->Barangay . ', ' . $serviceConnections->Town;
+        } elseif($serviceConnections->Sitio!=null && ($serviceConnections->Barangay!=null && $serviceConnections->Town!=null)) {
+            return $serviceConnections->Sitio . ', ' . $serviceConnections->Barangay . ', ' . $serviceConnections->Town;
+        }
+    }
 }

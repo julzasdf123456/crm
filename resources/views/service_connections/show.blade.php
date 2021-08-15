@@ -1,3 +1,9 @@
+<?php
+
+use App\Models\ServiceConnections;
+
+?>
+
 @extends('layouts.app')
 
 @section('content')
@@ -5,8 +11,8 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Service Connections Details</h1>
-                </div>
+                    <span class="badge-lg text-white bg-warning"><strong>{{ $serviceConnections->Status }}</strong></span>
+                </div> 
                 <div class="col-sm-6">
                     <a class="btn btn-default float-right"
                        href="{{ route('serviceConnections.index') }}">
@@ -18,10 +24,126 @@
     </section>
 
     <div class="content px-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    @include('service_connections.show_fields')
+        <div class="row">
+            <div class="col-md-4 col-lg-3">
+                <div class="card card-primary card-outline">
+                    <div class="card-body box-profile">
+                        <div class="text-center">
+                            <img class="profile-user-img img-fluid img-circle" src="../../dist/img/user4-128x128.jpg" alt="User profile picture">
+                        </div>
+
+                        <h3 class="profile-username text-center">{{ $serviceConnections->ServiceAccountName }}</h3>
+                        <p class="text-muted text-center">{{ $serviceConnections->id }} ({{ $serviceConnections->AccountApplicationType }})</p>
+
+                        <hr>
+
+                        <strong><i class="far fa-calendar mr-1"></i> Date of Application</strong>
+                        <p class="text-muted">{{ date('F d, Y', strtotime($serviceConnections->DateOfApplication)) }}</p>
+
+                        <hr>                        
+
+                        <strong><i class="fas fa-map-marker-alt mr-1"></i> Address</strong>
+                        <p class="text-muted">{{ ServiceConnections::getAddress($serviceConnections) }}</p>
+
+                        <hr>
+
+                        <strong><i class="fas fa-phone mr-1"></i> Contact Info</strong>
+                        <p class="text-muted">{{ ServiceConnections::getContactInfo($serviceConnections) }}</p>
+
+                        <hr>
+
+                        <strong><i class="fas fa-search-plus mr-1"></i> Account Count</strong>
+                        <p class="text-muted">{{ $serviceConnections->AccountCount }}</p>
+
+                        <hr>
+
+                        <strong><i class="fas fa-code-branch mr-1"></i> Account Type</strong>
+                        <p class="text-muted">{{ $serviceConnections->AccountType }}</p>
+
+                        <hr>
+
+                        <strong><i class="fas fa-code-branch mr-1"></i> Application Type</strong>
+                        <p class="text-muted">{{ $serviceConnections->ConnectionApplicationType }}</p>
+
+                        <hr>
+
+                        <strong><i class="far fa-file-alt mr-1"></i> Notes</strong>
+                        <p class="text-muted">{{ $serviceConnections->Notes}}</p>
+
+                        <a href="{{ route('serviceConnections.edit', [$serviceConnections->id]) }}" class="btn btn-link text-info" title="Edit service connection details"><i class="fas fa-user-edit"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8 col-lg-8">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item"><a class="nav-link active" href="#verification" data-toggle="tab"><i class="fas fa-clipboard-check ico-tab"></i>Verification</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#metering" data-toggle="tab"><i class="fas fa-charging-station ico-tab"></i>Metering and Transformer</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#other" data-toggle="tab"><i class="fas fa-ellipsis-h ico-tab"></i>Other</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="verification">
+                                <!-- Connection -->
+                                <div class="card">
+                                    <div class="card-header border-0">
+                                        <h3 class="card-title">Verification</h3>
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-sm" data-card-widget="collapse" title="Collapse">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body table-responsive p-0">
+                                        <table class="table table-striped table-valign-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th>Circuitry</th>
+                                                    <th>Planned</th>
+                                                    <th>Installed</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>Service Entrance Main Breaker</td>
+                                                <td>{{ $serviceConnectionInspections->SEMainCircuitBreakerAsPlan==null ? '-' : $serviceConnectionInspections->SEMainCircuitBreakerAsPlan . ' amps' }}</td>
+                                                <td>{{ $serviceConnectionInspections->SEMainCircuitBreakerAsInstalled==null ? '-' : $serviceConnectionInspections->SEMainCircuitBreakerAsInstalled . ' amps' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Number of Breaker Branches</td>
+                                                <td>{{ $serviceConnectionInspections->SENoOfBranchesAsPlan==null ? '-' : $serviceConnectionInspections->SENoOfBranchesAsPlan }}</td>
+                                                <td>{{ $serviceConnectionInspections->SENoOfBranchesAsInstalled==null ? '-' : $serviceConnectionInspections->SENoOfBranchesAsInstalled }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Service Drop Wire Size</td>
+                                                <td>{{ $serviceConnectionInspections->SDWSizeAsPlan==null ? '-' : $serviceConnectionInspections->SDWSizeAsPlan . ' mm' }}</td>
+                                                <td>{{ $serviceConnectionInspections->SDWSizeAsInstalled==null ? '-' : $serviceConnectionInspections->SDWSizeAsInstalled . ' mm' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Service Drop Wire Length</td>
+                                                <td>{{ $serviceConnectionInspections->SDWLengthAsPlan==null ? '-' : $serviceConnectionInspections->SDWLengthAsPlan . ' m' }}</td>
+                                                <td>{{ $serviceConnectionInspections->SDWLengthAsInstalled==null ? '-' : $serviceConnectionInspections->SDWLengthAsInstalled . ' m' }}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="metering">
+                                
+                            </div>
+
+                            <div class="tab-pane" id="other">
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -8,6 +8,7 @@ use App\Repositories\ServiceConnectionInspectionsRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use App\Models\ServiceConnections;
+use App\Http\Controllers\ServiceConnectionsController;
 use App\Models\User;
 use Flash;
 use Response;
@@ -63,7 +64,9 @@ class ServiceConnectionInspectionsController extends AppBaseController
 
         Flash::success('Service Connection Inspections saved successfully.');
 
-        return redirect(route('serviceConnectionInspections.index'));
+        // return redirect()->action([ServiceConnectionsController::class, 'show'], [$input['ServiceConnectionId']]);
+        // return redirect()->action([App\Http\Controllers\ServiceConnectionMtrTrnsfrmrController::class, 'createStepThree'], [$input['ServiceConnectionId']]);
+        return redirect(route('serviceConnectionMtrTrnsfrmrs.create-step-three', [$input['ServiceConnectionId']]));
     }
 
     /**

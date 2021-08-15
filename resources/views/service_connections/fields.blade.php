@@ -9,7 +9,7 @@ use App\Models\IDGenerator;
 @if($cond == 'new') 
     <input type="hidden" name="id" id="Membership_Id" value="{{ IDGenerator::generateID() }}">
 @else 
-
+    <input type="hidden" name="id" id="Membership_Id" value="{{ $serviceConnections->id }}">
 @endif
 
 <!-- Connectionapplicationtype Field -->
@@ -127,7 +127,7 @@ use App\Models\IDGenerator;
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                 </div>
-                {!! Form::select('Town', $towns, $memberConsumer->TownId, ['class' => 'form-control']) !!}
+                {!! Form::select('Town', $towns, $cond=='new' ? $memberConsumer->TownId : $serviceConnections->TownId, ['class' => 'form-control']) !!}
             </div>
         </div>
     </div>    
@@ -293,10 +293,6 @@ use App\Models\IDGenerator;
 </div>
 
 <!-- Isnihe Field -->
-<!-- <div class="form-group col-sm-6"> -->
-    <!-- {!! Form::label('IsNIHE', 'Isnihe:') !!}
-    {!! Form::text('IsNIHE', null, ['class' => 'form-control','maxlength' => 255,'maxlength' => 255]) !!} -->
-<!-- </div> -->
 <input type="hidden" name="IsNIHE" value="NO">
 
 <!-- Notes Field -->
