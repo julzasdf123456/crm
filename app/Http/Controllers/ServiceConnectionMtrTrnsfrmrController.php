@@ -128,7 +128,8 @@ class ServiceConnectionMtrTrnsfrmrController extends AppBaseController
 
         Flash::success('Service Connection Mtr Trnsfrmr updated successfully.');
 
-        return redirect(route('serviceConnectionMtrTrnsfrmrs.index'));
+        // return redirect(route('serviceConnectionMtrTrnsfrmrs.index'));
+        return redirect()->action([ServiceConnectionsController::class, 'show'], [$request['ServiceConnectionId']]);
     }
 
     /**
@@ -160,6 +161,8 @@ class ServiceConnectionMtrTrnsfrmrController extends AppBaseController
     public function createStepThree($scId) {
         $serviceConnection = ServiceConnections::find($scId);
 
-        return view('/service_connection_mtr_trnsfrmrs/create_step_three', ['serviceConnection' => $serviceConnection]);
+        $serviceConnectionMtrTrnsfrmr = null;
+
+        return view('/service_connection_mtr_trnsfrmrs/create_step_three', ['serviceConnection' => $serviceConnection, 'serviceConnectionMtrTrnsfrmr' => $serviceConnectionMtrTrnsfrmr]);
     }
 }

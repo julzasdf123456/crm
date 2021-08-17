@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ServiceConnectionsController;
+use App\Http\Controllers\MemberConsumersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +46,8 @@ Route::resource('roles', App\Http\Controllers\RoleController::class);
 Route::resource('permissions', App\Http\Controllers\PermissionController::class);
 
 
-Route::resource('memberConsumers', App\Http\Controllers\MemberConsumersController::class);
+Route::get('/member_consumers/fetchmemberconsumer', [MemberConsumersController::class, 'fetchmemberconsumer'])->name('memberConsumers.fetch-member-consumers');
+Route::resource('memberConsumers', MemberConsumersController::class);
 
 
 Route::resource('memberConsumerTypes', App\Http\Controllers\MemberConsumerTypesController::class);
@@ -64,6 +66,7 @@ Route::get('/member_consumer_spouses/edit/{consumerId}', [App\Http\Controllers\M
 Route::patch('/member_consumer_spouses/update/{id}', [App\Http\Controllers\MemberConsumerSpouseController::class, 'update'])->name('memberConsumerSpouses.update');
 // Route::resource('memberConsumerSpouses', App\Http\Controllers\MemberConsumerSpouseController::class);
 
+Route::get('/service_connections/fetchserviceconnections', [ServiceConnectionsController::class, 'fetchserviceconnections'])->name('serviceConnections.fetch-service-connections');
 Route::get('/service_connections/selectmembership', [ServiceConnectionsController::class, 'selectMembership'])->name('serviceConnections.selectmembership');
 Route::get('/service_connections/fetchmemberconsumer', [ServiceConnectionsController::class, 'fetchmemberconsumer'])->name('serviceConnections.fetch-member-consumers');
 Route::get('/service_connections/create_new/{consumerId}', [ServiceConnectionsController::class, 'createNew'])->name('serviceConnections.create_new');

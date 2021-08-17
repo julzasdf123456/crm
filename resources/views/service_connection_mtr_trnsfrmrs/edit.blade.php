@@ -21,6 +21,10 @@
 
             <div class="card-body">
                 <div class="row">
+                    <input type="hidden" name="id" value="{{ $serviceConnectionMtrTrnsfrmr->id }}">
+
+                    <input type="hidden" name="ServiceConnectionId" value="{{ $serviceConnectionMtrTrnsfrmr->ServiceConnectionId }}">
+
                     @include('service_connection_mtr_trnsfrmrs.fields')
                 </div>
             </div>

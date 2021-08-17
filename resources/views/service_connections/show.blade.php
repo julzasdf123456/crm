@@ -70,7 +70,7 @@ use App\Models\ServiceConnections;
                         <strong><i class="far fa-file-alt mr-1"></i> Notes</strong>
                         <p class="text-muted">{{ $serviceConnections->Notes}}</p>
 
-                        <a href="{{ route('serviceConnections.edit', [$serviceConnections->id]) }}" class="btn btn-link text-info" title="Edit service connection details"><i class="fas fa-user-edit"></i></a>
+                        <a href="{{ route('serviceConnections.edit', [$serviceConnections->id]) }}" class="text-warning" title="Edit service connection details"><i class="fas fa-user-edit"></i></a>
                     </div>
                 </div>
             </div>
@@ -88,59 +88,15 @@ use App\Models\ServiceConnections;
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane active" id="verification">
-                                <!-- Connection -->
-                                <div class="card">
-                                    <div class="card-header border-0">
-                                        <h3 class="card-title">Verification</h3>
-                                        <div class="card-tools">
-                                            <button type="button" class="btn btn-sm" data-card-widget="collapse" title="Collapse">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div class="card-body table-responsive p-0">
-                                        <table class="table table-striped table-valign-middle">
-                                            <thead>
-                                                <tr>
-                                                    <th>Circuitry</th>
-                                                    <th>Planned</th>
-                                                    <th>Installed</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr>
-                                                <td>Service Entrance Main Breaker</td>
-                                                <td>{{ $serviceConnectionInspections->SEMainCircuitBreakerAsPlan==null ? '-' : $serviceConnectionInspections->SEMainCircuitBreakerAsPlan . ' amps' }}</td>
-                                                <td>{{ $serviceConnectionInspections->SEMainCircuitBreakerAsInstalled==null ? '-' : $serviceConnectionInspections->SEMainCircuitBreakerAsInstalled . ' amps' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Number of Breaker Branches</td>
-                                                <td>{{ $serviceConnectionInspections->SENoOfBranchesAsPlan==null ? '-' : $serviceConnectionInspections->SENoOfBranchesAsPlan }}</td>
-                                                <td>{{ $serviceConnectionInspections->SENoOfBranchesAsInstalled==null ? '-' : $serviceConnectionInspections->SENoOfBranchesAsInstalled }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Service Drop Wire Size</td>
-                                                <td>{{ $serviceConnectionInspections->SDWSizeAsPlan==null ? '-' : $serviceConnectionInspections->SDWSizeAsPlan . ' mm' }}</td>
-                                                <td>{{ $serviceConnectionInspections->SDWSizeAsInstalled==null ? '-' : $serviceConnectionInspections->SDWSizeAsInstalled . ' mm' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Service Drop Wire Length</td>
-                                                <td>{{ $serviceConnectionInspections->SDWLengthAsPlan==null ? '-' : $serviceConnectionInspections->SDWLengthAsPlan . ' m' }}</td>
-                                                <td>{{ $serviceConnectionInspections->SDWLengthAsInstalled==null ? '-' : $serviceConnectionInspections->SDWLengthAsInstalled . ' m' }}</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                @include('service_connections.verification')
                             </div>
 
                             <div class="tab-pane" id="metering">
-                                
+                                @include('service_connections.metering')
                             </div>
 
                             <div class="tab-pane" id="other">
-
+                                
                             </div>
                         </div>
                     </div>

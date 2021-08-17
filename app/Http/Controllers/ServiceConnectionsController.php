@@ -12,6 +12,7 @@ use App\Models\Towns;
 use App\Models\ServiceConnectionAccountTypes;
 use App\Models\ServiceConnections;
 use App\Models\ServiceConnectionInspections;
+use App\Models\ServiceConnectionMtrTrnsfrmr;
 use Illuminate\Support\Facades\DB;
 use Flash;
 use Response;
@@ -105,13 +106,15 @@ class ServiceConnectionsController extends AppBaseController
 
         $serviceConnectionInspections = ServiceConnectionInspections::where('ServiceConnectionId', $id)->first();
 
+        $serviceConnectionMeter = ServiceConnectionMtrTrnsfrmr::where('ServiceConnectionId', $id)->first();
+
         if (empty($serviceConnections)) {
             Flash::error('Service Connections not found');
 
             return redirect(route('serviceConnections.index'));
         }
 
-        return view('service_connections.show', ['serviceConnections' => $serviceConnections, 'serviceConnectionInspections' => $serviceConnectionInspections]);
+        return view('service_connections.show', ['serviceConnections' => $serviceConnections, 'serviceConnectionInspections' => $serviceConnectionInspections, 'serviceConnectionMeter' => $serviceConnectionMeter]);
     }
 
     /**
@@ -321,5 +324,79 @@ class ServiceConnectionsController extends AppBaseController
         $accountTypes = ServiceConnectionAccountTypes::orderBy('id')->pluck('AccountType', 'id');
 
         return view('/service_connections/create_new', ['memberConsumer' => $memberConsumer, 'cond' => $cond, 'towns' => $towns, 'accountTypes' => $accountTypes]);
+    }
+
+    public function fetchserviceconnections(Request $request) {
+        if ($request->ajax()) {
+            $query = $request->get('query');
+            
+            if ($query != '' ) {
+                $data = DB::table('CRM_ServiceConnections')
+                    ->join('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')                    
+                    ->join('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                    ->join('CRM_ServiceConnectionAccountTypes', 'CRM_ServiceConnections.AccountType', '=', 'CRM_ServiceConnectionAccountTypes.id')
+                    ->select('CRM_ServiceConnections.id as ConsumerId',
+                                    'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                                    'CRM_ServiceConnections.Status as Status',
+                                    'CRM_ServiceConnections.DateOfApplication as DateOfApplication', 
+                                    'CRM_ServiceConnections.ContactNumber as ContactNumber', 
+                                    'CRM_ServiceConnections.EmailAddress as EmailAddress',  
+                                    'CRM_ServiceConnections.AccountCount as AccountCount',  
+                                    'CRM_ServiceConnections.Sitio as Sitio', 
+                                    'CRM_Towns.Town as Town',
+                                    'CRM_ServiceConnectionAccountTypes.AccountType as AccountType',
+                                    'CRM_Barangays.Barangay as Barangay')
+                    ->where('CRM_ServiceConnections.ServiceAccountName', 'LIKE', '%' . $query . '%')
+                    ->orWhere('CRM_ServiceConnections.Id', 'LIKE', '%' . $query . '%')
+                    ->orderBy('CRM_ServiceConnections.ServiceAccountName')
+                    ->get();
+            } else {
+                $data = [];
+            }
+
+            $total_row = $data->count();
+            if ($total_row > 0) {
+                $output = '';
+                foreach ($data as $row) {
+
+                    $output .= '
+                        <div class="col-md-10 offset-md-1 col-lg-10 offset-lg-1" style="margin-top: 10px;">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 col-lg-6">
+                                            <div>
+                                                <h4>' .$row->ServiceAccountName . '</h4>
+                                                <p class="text-muted" style="margin-bottom: 0;">Acount Number: ' . $row->ConsumerId . '</p>
+                                                <p class="text-muted" style="margin-bottom: 0;">' . $row->Barangay . ', ' . $row->Town  . '</p>
+                                                <a href="' . route('serviceConnections.show', [$row->ConsumerId]) . '" class="text-primary" style="margin-top: 5px; padding: 8px;" title="View"><i class="fas fa-eye"></i></a>
+                                                <a href="' . route('serviceConnections.edit', [$row->ConsumerId]) . '" class="text-warning" style="margin-top: 5px; padding: 8px;" title="Edit"><i class="fas fa-pen"></i></a>
+                                            </div>     
+                                        </div> 
+
+                                        <div class="col-md-6 col-lg-6 d-sm-none d-md-block d-none d-sm-block" style="border-left: 2px solid #007bff; padding-left: 15px;">
+                                            <div>
+                                                <p class="text-muted" style="margin-bottom: 0;">Date of Application: <strong>' . date('F d, Y', strtotime($row->DateOfApplication)) . '</strong></p>
+                                                <p class="text-muted" style="margin-bottom: 0;">AccountCount: <strong>' . $row->AccountCount . '</strong></p>
+                                                <p class="text-muted" style="margin-bottom: 0;">Status: <strong>' . $row->Status . '</strong></p>
+                                                <p class="text-muted" style="margin-bottom: 0;">Account Type: <strong>' . $row->AccountType . '</strong></p>
+                                            </div>     
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>   
+                    ';
+                }                
+            } else {
+                $output = '<p class="text-center">No data found.</p>';
+            }
+
+            $data = [
+                'table_data' => $output
+            ];
+
+            echo json_encode($data);
+        }
     }
 }

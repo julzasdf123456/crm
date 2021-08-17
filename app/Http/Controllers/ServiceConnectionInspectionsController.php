@@ -100,13 +100,15 @@ class ServiceConnectionInspectionsController extends AppBaseController
     {
         $serviceConnectionInspections = $this->serviceConnectionInspectionsRepository->find($id);
 
+        $inspectors = User::permission('sc verifier')->pluck('name', 'id'); // CHANGE PERMISSION TO WHATEVER VERIFIER NAME IS
+
         if (empty($serviceConnectionInspections)) {
             Flash::error('Service Connection Inspections not found');
 
             return redirect(route('serviceConnectionInspections.index'));
         }
 
-        return view('service_connection_inspections.edit')->with('serviceConnectionInspections', $serviceConnectionInspections);
+        return view('service_connection_inspections.edit', ['serviceConnectionInspections' => $serviceConnectionInspections, 'inspectors' => $inspectors]);
     }
 
     /**
@@ -131,7 +133,8 @@ class ServiceConnectionInspectionsController extends AppBaseController
 
         Flash::success('Service Connection Inspections updated successfully.');
 
-        return redirect(route('serviceConnectionInspections.index'));
+        // return redirect(route('serviceConnectionInspections.index'));
+        return redirect()->action([ServiceConnectionsController::class, 'show'], [$request['ServiceConnectionId']]);
     }
 
     /**
@@ -165,6 +168,8 @@ class ServiceConnectionInspectionsController extends AppBaseController
 
         $inspectors = User::permission('sc verifier')->pluck('name', 'id'); // CHANGE PERMISSION TO WHATEVER VERIFIER NAME IS
 
-        return view('/service_connection_inspections/create_step_two', ['serviceConnection' => $serviceConnection, 'inspectors' => $inspectors]);
+        $serviceConnectionInspections = null;
+
+        return view('/service_connection_inspections/create_step_two', ['serviceConnection' => $serviceConnection, 'inspectors' => $inspectors, 'serviceConnectionInspections' => $serviceConnectionInspections]);
     }
 }

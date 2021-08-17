@@ -21,6 +21,10 @@
 
             <div class="card-body">
                 <div class="row">
+                    <input type="hidden" name="id" value="{{ $serviceConnectionInspections->id }}">
+
+                    <input type="hidden" name="ServiceConnectionId" value="{{ $serviceConnectionInspections->ServiceConnectionId }}">
+
                     @include('service_connection_inspections.fields')
                 </div>
             </div>

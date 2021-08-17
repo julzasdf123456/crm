@@ -236,11 +236,11 @@
 
                 <div class='radio-group-horizontal'>
                     <div class="form-check">
-                        <input class="form-check-input" id="direct" type="radio" name="TypeOfMetering" value="DIRECT">
+                        <input class="form-check-input" id="direct" type="radio" name="TypeOfMetering" value="DIRECT"  {{ ($serviceConnectionMtrTrnsfrmr != null ? ($serviceConnectionMtrTrnsfrmr->TypeOfMetering=="DIRECT" ? "checked" : "") : "") }}>
                         <label class="form-check-label">Direct</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" id="instrument_rated" type="radio" name="TypeOfMetering" value="INSTRUMENT RATED">
+                        <input class="form-check-input" id="instrument_rated" type="radio" name="TypeOfMetering" value="INSTRUMENT RATED" {{ ($serviceConnectionMtrTrnsfrmr != null ? ($serviceConnectionMtrTrnsfrmr->TypeOfMetering=="INSTRUMENT RATED" ? "checked" : "") : "") }}>
                         <label class="form-check-label">Instrument Rated (CT/PT)</label>
                     </div>
                 </div>                
@@ -253,16 +253,47 @@
         $(document).ready(function() {
             $('#direct_section').hide();
             $('#indirect_section').hide();
-        });
-        $('#direct').on('change', function() {
-            $('#direct_section').show();
-            $('#indirect_section').hide();
-        });
 
-        $('#instrument_rated').on('change', function() {            
-            $('#indirect_section').show();
-            $('#direct_section').hide();
+            if($('#direct').is(':checked')) {
+                $('#direct_section').show();
+                $('#indirect_section').hide();
+            }
+
+            if ($('#instrument_rated').is(':checked')) {
+                $('#indirect_section').show();
+                $('#direct_section').hide();
+            } 
+
+            $('#direct').on('change', function() {
+                $('#direct_section').show();
+                $('#indirect_section').hide();
+
+                // UNCHECK INSTRUMENT RATED
+                // $('#Phase1').prop('checked', false);
+                // $('#Phase2').prop('checked', false);
+                // $('#Phase3').prop('checked', false);
+
+                // UNCHECK INSTRUMENT FIELD
+                // $('#InstrumentRatedCapacity1').prop('checked', false);
+                // $('#InstrumentRatedCapacity2').prop('checked', false);
+            });
+
+            $('#instrument_rated').on('change', function() {            
+                $('#indirect_section').show();
+                $('#direct_section').hide();
+
+                // UNCHECK DIRECT
+                // $('#Phase1').prop('checked', false);
+                // $('#Phase2').prop('checked', false);
+                // $('#Phase3').prop('checked', false);
+
+                // UNCHECK CAPACITY FIELD
+                // $('#DirectRatedCapacity1').prop('checked', false);
+                // $('#DirectRatedCapacity2').prop('checked', false);
+                // $('#DirectRatedCapacity3').prop('checked', false);
+            });           
         });
+        
     </script>
 @endpush
 
@@ -281,15 +312,15 @@
 
                 <div class='radio-group-horizontal'>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="Phase" value="ONE">
+                        <input class="form-check-input" type="radio" id="Phase1" name="Phase" value="ONE" {{ ($serviceConnectionMtrTrnsfrmr != null ? ($serviceConnectionMtrTrnsfrmr->Phase=="ONE" ? "checked" : "") : "") }}>
                         <label class="form-check-label">One</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="Phase" value="TWO">
+                        <input class="form-check-input" type="radio" id="Phase2" name="Phase" value="TWO" {{ ($serviceConnectionMtrTrnsfrmr != null ? ($serviceConnectionMtrTrnsfrmr->Phase=="TWO" ? "checked" : "") : "") }}>
                         <label class="form-check-label">Two</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="Phase" value="THREE">
+                        <input class="form-check-input" type="radio" id="Phase3" name="Phase" value="THREE" {{ ($serviceConnectionMtrTrnsfrmr != null ? ($serviceConnectionMtrTrnsfrmr->Phase=="THREE" ? "checked" : "") : "") }}>
                         <label class="form-check-label">Three</label>
                     </div>
                 </div>                
@@ -314,15 +345,15 @@
 
                     <div class='radio-group-horizontal'>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="DirectRatedCapacity" value="60A">
+                            <input class="form-check-input" type="radio" id="DirectRatedCapacity1" name="DirectRatedCapacity" value="60A" {{ ($serviceConnectionMtrTrnsfrmr != null ? ($serviceConnectionMtrTrnsfrmr->DirectRatedCapacity=="60A" ? "checked" : "") : "") }}>
                             <label class="form-check-label">60 A</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="DirectRatedCapacity" value="100A">
+                            <input class="form-check-input" type="radio" id="DirectRatedCapacity2" name="DirectRatedCapacity" value="100A" {{ ($serviceConnectionMtrTrnsfrmr != null ? ($serviceConnectionMtrTrnsfrmr->DirectRatedCapacity=="100A" ? "checked" : "") : "") }}>
                             <label class="form-check-label">100 A</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="DirectRatedCapacity" value="200A">
+                            <input class="form-check-input" type="radio" id="DirectRatedCapacity3" name="DirectRatedCapacity" value="200A" {{ ($serviceConnectionMtrTrnsfrmr != null ? ($serviceConnectionMtrTrnsfrmr->DirectRatedCapacity=="200A" ? "checked" : "") : "") }}>
                             <label class="form-check-label">200 A</label>
                         </div>
                     </div>                
@@ -348,11 +379,11 @@
 
                     <div class='radio-group-horizontal'>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="InstrumentRatedCapacity" value="FORM 3S">
+                            <input class="form-check-input" type="radio" id="InstrumentRatedCapacity1" name="InstrumentRatedCapacity" value="FORM 3S">
                             <label class="form-check-label">FORM 3S</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="InstrumentRatedCapacity" value="FORM 48E">
+                            <input class="form-check-input" type="radio" id="InstrumentRatedCapacity2" name="InstrumentRatedCapacity" value="FORM 48E">
                             <label class="form-check-label">FORM 48E</label>
                         </div>
                     </div>                

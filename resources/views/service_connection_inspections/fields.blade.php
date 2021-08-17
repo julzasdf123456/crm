@@ -10,7 +10,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-user-check"></i></span>
                 </div>
-                {!! Form::select('Inspector', $inspectors, null, ['class' => 'form-control']) !!}
+                {!! Form::select('Inspector', $inspectors, $serviceConnectionInspections==null ? null : $serviceConnectionInspections->Inspector, ['class' => 'form-control']) !!}
             </div>
         </div>
     </div>  
@@ -126,7 +126,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-hard-hat"></i></span>
                 </div>
-                {!! Form::select('Inspector', ['PEE' => 'PEE', 'EE' => 'EE', 'RME' => 'RME'], null, ['class' => 'form-control']) !!}
+                {!! Form::select('EngineerInchargeTitle', ['PEE' => 'PEE', 'EE' => 'EE', 'RME' => 'RME'], null, ['class' => 'form-control']) !!}
             </div>
         </div>
     </div>  
