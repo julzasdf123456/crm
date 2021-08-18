@@ -13,6 +13,7 @@ use App\Models\ServiceConnectionAccountTypes;
 use App\Models\ServiceConnections;
 use App\Models\ServiceConnectionInspections;
 use App\Models\ServiceConnectionMtrTrnsfrmr;
+use App\Models\ServiceConnectionPayTransaction;
 use Illuminate\Support\Facades\DB;
 use Flash;
 use Response;
@@ -108,13 +109,18 @@ class ServiceConnectionsController extends AppBaseController
 
         $serviceConnectionMeter = ServiceConnectionMtrTrnsfrmr::where('ServiceConnectionId', $id)->first();
 
+        $serviceConnectionTransactions = ServiceConnectionPayTransaction::where('ServiceConnectionId', $id)->first();
+
         if (empty($serviceConnections)) {
             Flash::error('Service Connections not found');
 
             return redirect(route('serviceConnections.index'));
         }
 
-        return view('service_connections.show', ['serviceConnections' => $serviceConnections, 'serviceConnectionInspections' => $serviceConnectionInspections, 'serviceConnectionMeter' => $serviceConnectionMeter]);
+        return view('service_connections.show', ['serviceConnections' => $serviceConnections, 
+                                                'serviceConnectionInspections' => $serviceConnectionInspections, 
+                                                'serviceConnectionMeter' => $serviceConnectionMeter, 
+                                                'serviceConnectionTransactions' => $serviceConnectionTransactions]);
     }
 
     /**

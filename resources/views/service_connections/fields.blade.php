@@ -30,6 +30,24 @@ use App\Models\IDGenerator;
     </div>  
 </div>
 
+<!-- BuildingType Field -->
+<div class="form-group col-sm-12">
+    <div class="row">
+        <div class="col-lg-3 col-md-5">
+            {!! Form::label('BuildingType', 'Building Type') !!}
+        </div>
+
+        <div class="col-lg-9 col-md-7">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-tools"></i></span>
+                </div>
+                {!! Form::select('BuildingType', ['Concrete' => 'Concrete', 'Non-Concrete' => 'Non-Concrete', 'Special Lighting' => 'Special Lighting'], $cond=='new' ? '' : $serviceConnections->BuildingType, ['class' => 'form-control']) !!}
+            </div>
+        </div>
+    </div>  
+</div>
+
 <!-- Memberconsumerid Field -->
 <div class="form-group col-sm-12">
     <div class="row">

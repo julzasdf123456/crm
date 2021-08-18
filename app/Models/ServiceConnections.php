@@ -67,6 +67,7 @@ class ServiceConnections extends Model
         'IsNIHE',
         'AccountApplicationType',
         'ConnectionApplicationType',
+        'BuildingType',
         'Status',
         'Notes'
     ];
@@ -93,6 +94,7 @@ class ServiceConnections extends Model
         'IsNIHE' => 'string',
         'AccountApplicationType' => 'string',
         'ConnectionApplicationType' => 'string',
+        'BuildingType' => 'string',
         'Status' => 'string',
         'Notes' => 'string'
     ];
@@ -119,6 +121,7 @@ class ServiceConnections extends Model
         'IsNIHE' => 'nullable|string|max:255',
         'AccountApplicationType' => 'nullable|string|max:100',
         'ConnectionApplicationType' => 'nullable|string|max:100',
+        'BuildingType' => 'nullable|string',
         'Status' => 'nullable|string|max:100',
         'Notes' => 'nullable|string|max:2000',
         'created_at' => 'nullable',

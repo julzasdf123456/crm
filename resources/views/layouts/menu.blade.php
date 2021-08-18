@@ -68,6 +68,20 @@
                         <i class="fas fa-code-branch nav-icon"></i><p>Account Types</p>
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('serviceConnectionMatPayables.index') }}"
+                        class="nav-link {{ Request::is('serviceConnectionMatPayables*') ? 'active' : '' }}">
+                        <i class="fas fa-hammer nav-icon"></i><p>Material Payables</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('serviceConnectionPayParticulars.index') }}"
+                        class="nav-link {{ Request::is('serviceConnectionPayParticulars*') ? 'active' : '' }}">
+                        <i class="fas fa-shopping-cart nav-icon"></i><p>Payment Particulars</p>
+                        </a>
+                    </li>
                 </ul>
               </li>
         </ul>

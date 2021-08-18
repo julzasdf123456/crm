@@ -21,7 +21,7 @@
                 <div class="card">
 
                     <div class="card-header">
-                        <span class="card-title">Step <strong>1</strong> of 3 - <strong>Applicant Basic Account Info</strong></span>
+                        <span class="card-title">Step <strong>1</strong> of 4 - <strong>Applicant Basic Account Info</strong></span>
                     </div>
 
                     {!! Form::open(['route' => 'serviceConnections.store']) !!}

@@ -27,7 +27,7 @@ use App\Models\IDGenerator;
                 <div class="card">
 
                     <div class="card-header">
-                        <span class="card-title">Step <strong>2</strong> of 3 - <strong>Technical and Verification</strong></span>
+                        <span class="card-title">Step <strong>2</strong> of 4 - <strong>Technical and Verification</strong></span>
                     </div>
 
                     {!! Form::open(['route' => 'serviceConnectionInspections.store']) !!}

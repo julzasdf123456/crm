@@ -63,7 +63,8 @@ class ServiceConnectionMtrTrnsfrmrController extends AppBaseController
 
         Flash::success('Service Connection Mtr Trnsfrmr saved successfully.');
 
-        return redirect()->action([ServiceConnectionsController::class, 'show'], [$input['ServiceConnectionId']]);
+        // return redirect()->action([ServiceConnectionsController::class, 'show'], [$input['ServiceConnectionId']]);        
+        return redirect(route('serviceConnectionPayTransactions.create-step-four', [$input['ServiceConnectionId']]));
     }
 
     /**

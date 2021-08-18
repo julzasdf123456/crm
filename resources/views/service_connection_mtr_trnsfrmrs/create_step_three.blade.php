@@ -27,7 +27,7 @@ use App\Models\IDGenerator;
                 <div class="card">
 
                     <div class="card-header">
-                        <span class="card-title">Step <strong>3</strong> of 3 - <strong>Meter, Transformer, and Other Equipments</strong></span>
+                        <span class="card-title">Step <strong>3</strong> of 4 - <strong>Meter, Transformer, and Other Equipments</strong></span>
                     </div>
 
                     {!! Form::open(['route' => 'serviceConnectionMtrTrnsfrmrs.store']) !!}
@@ -46,7 +46,7 @@ use App\Models\IDGenerator;
                     </div>
 
                     <div class="card-footer">
-                        {!! Form::submit('Finnish', ['class' => 'btn btn-primary']) !!}
+                        {!! Form::submit('Proceed to Payment', ['class' => 'btn btn-primary']) !!}
                     </div>
 
                     {!! Form::close() !!}

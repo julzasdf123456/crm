@@ -81,7 +81,7 @@ use App\Models\ServiceConnections;
                         <ul class="nav nav-pills">
                             <li class="nav-item"><a class="nav-link active" href="#verification" data-toggle="tab"><i class="fas fa-clipboard-check ico-tab"></i>Verification</a></li>
                             <li class="nav-item"><a class="nav-link" href="#metering" data-toggle="tab"><i class="fas fa-charging-station ico-tab"></i>Metering and Transformer</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#other" data-toggle="tab"><i class="fas fa-ellipsis-h ico-tab"></i>Other</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#invoice" data-toggle="tab"><i class="fas fa-shopping-cart ico-tab"></i>Payment Invoice</a></li>
                         </ul>
                     </div>
 
@@ -95,8 +95,8 @@ use App\Models\ServiceConnections;
                                 @include('service_connections.metering')
                             </div>
 
-                            <div class="tab-pane" id="other">
-                                
+                            <div class="tab-pane" id="invoice">
+                                @include('service_connections.invoice')
                             </div>
                         </div>
                     </div>
