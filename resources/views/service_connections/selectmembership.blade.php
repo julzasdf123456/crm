@@ -33,6 +33,8 @@
     <script>
         $(document).ready(function() {
 
+            fetchConsumers('');
+
             function fetchConsumers(query = '') {
                 $.ajax({
                     url : "{{ route('serviceConnections.fetch-member-consumers') }}",

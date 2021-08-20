@@ -61,7 +61,8 @@ class ServiceConnectionTotalPaymentsController extends AppBaseController
 
         Flash::success('Service Connection Total Payments saved successfully.');
 
-        return redirect(route('serviceConnectionTotalPayments.index'));
+        // return redirect(route('serviceConnectionTotalPayments.index'));
+        return redirect()->action([ServiceConnectionsController::class, 'show'], [$input['ServiceConnectionId']]); 
     }
 
     /**
@@ -82,6 +83,7 @@ class ServiceConnectionTotalPaymentsController extends AppBaseController
         }
 
         return view('service_connection_total_payments.show')->with('serviceConnectionTotalPayments', $serviceConnectionTotalPayments);
+          
     }
 
     /**
@@ -124,9 +126,10 @@ class ServiceConnectionTotalPaymentsController extends AppBaseController
 
         $serviceConnectionTotalPayments = $this->serviceConnectionTotalPaymentsRepository->update($request->all(), $id);
 
-        Flash::success('Service Connection Total Payments updated successfully.');
+        // Flash::success('Service Connection Total Payments updated successfully.');
 
-        return redirect(route('serviceConnectionTotalPayments.index'));
+        // return redirect(route('serviceConnectionTotalPayments.index'));
+        return redirect()->action([ServiceConnectionsController::class, 'show'], [$request['ServiceConnectionId']]); 
     }
 
     /**

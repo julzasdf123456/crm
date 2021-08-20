@@ -204,28 +204,36 @@ $id = IDGenerator::generateID();
 
                     <div class="divider"></div>
                     <p>Overall Total</p>
-                </div>
-
-                <div class="card">
-
-                    <div class="card-header">
-                        
-                    </div>
-
-                    {!! Form::open(['route' => 'serviceConnectionTotalPayments.store']) !!}
 
                     <div class="row">
-                        <input type="text" name="id" value="{{ $id }}">
+                        <div class="col-md-12">
 
-                        @include('service_connection_total_payments.fields')
+                            @if ($totalPayments == null)
+                                {!! Form::open(['route' => 'serviceConnectionTotalPayments.store']) !!}
+
+                                <input type="hidden" name="id" value="{{ $id }}">
+
+                                <input type="hidden" name="ServiceConnectionId" value="{{ $serviceConnection->id }}">
+                            @else
+                            {!! Form::model($totalPayments, ['route' => ['serviceConnectionTotalPayments.update', $totalPayments->id], 'method' => 'patch']) !!}
+                            
+                                <input type="hidden" name="id" value="{{ $totalPayments->id }}">
+
+                                <input type="hidden" name="ServiceConnectionId" value="{{ $totalPayments->ServiceConnectionId }}">
+                            @endif                            
+
+                            <div class="row">
+
+                                @include('service_connection_total_payments.fields')
+                            </div>
+
+                            <div class="card-footer">
+                                {!! Form::submit('Submit Payment', ['class' => 'btn btn-primary']) !!}
+                            </div>
+
+                            {!! Form::close() !!}
+                        </div>
                     </div>
-
-                    <div class="card-footer">
-                        {!! Form::submit('Submit Payment', ['class' => 'btn btn-primary']) !!}
-                    </div>
-
-                    {!! Form::close() !!}
-
                 </div>
              </div>
         </div>
@@ -240,6 +248,10 @@ $id = IDGenerator::generateID();
              */
             calculateTableColumn('materials_table', 5, 'totalMaterials');
             calculateTableColumn('particulars_table', 3, 'totalParticulars');
+
+            displaySubTotal();
+            displayTotalVat();
+            displayOverAllTotal();
 
             $('#add_materials').on('click', function() {
                 var materialId = $('#materials').val();
@@ -274,10 +286,13 @@ $id = IDGenerator::generateID();
                         success : function(data) {
                             $('#materials_table tbody').append(addRowToMaterials(matIdValue, material, rate, qty, subTotal.toFixed(2), vatValue.toFixed(2), total.toFixed(2)));
                             calculateTableColumn('materials_table', 5, 'totalMaterials');
+                            displaySubTotal();
+                            displayTotalVat();
+                            displayOverAllTotal();
                         },
                         error : function(error) {
                             console.log(error);
-                            alert(error);
+                            alert("Error inserting material " + error);
                         }
                     });                    
                 }
@@ -320,10 +335,13 @@ $id = IDGenerator::generateID();
                         success : function(data) {
                             $('#particulars_table tbody').append(addRowToParticulars(particularPaymentIdValue, particular, parseFloat(amnt).toFixed(2), vatValue.toFixed(2), total.toFixed(2)));
                             calculateTableColumn('particulars_table', 3, 'totalParticulars');
+                            displaySubTotal();
+                            displayTotalVat();
+                            displayOverAllTotal();
                         },
                         error : function(error) {
                             console.log(error);
-                            alert(error);
+                            alert("Error inserting material " + error);
                         }
                     });    
                 }
@@ -364,10 +382,13 @@ $id = IDGenerator::generateID();
                     success : function(data) {
                         $('#' + id).remove();
                         calculateTableColumn('materials_table', 5, 'totalMaterials');
+                        displaySubTotal();
+                        displayTotalVat();
+                        displayOverAllTotal();
                     },
                     error : function(error) {
                         console.log(error);
-                        alert(error);
+                        alert("Error inserting material " + error);
                     }
                 });  
             } else {
@@ -387,10 +408,13 @@ $id = IDGenerator::generateID();
                     success : function(data) {
                         $('#' + id).remove();
                         calculateTableColumn('particulars_table', 3, 'totalParticulars');
+                        displaySubTotal();
+                        displayTotalVat();
+                        displayOverAllTotal();
                     },
                     error : function(error) {
                         console.log(error);
-                        alert(error);
+                        alert("Error inserting material " + error);
                     }
                 });  
             } else {
@@ -408,6 +432,43 @@ $id = IDGenerator::generateID();
                 }
             });
             $('#' + display).text(total.toLocaleString('en-US', {maximumFractionDigits:2}));
+        }
+
+        function calculateTableColumnRaw(table, index, display) {
+            var total = 0;
+            $('#' + table + ' tr').each(function() {
+                var value = parseFloat($('td', this).eq(index).text().replace(',', ''));
+                console.log(value);
+                if (!isNaN(value)) {
+                    total += parseFloat(value);
+                }
+            });
+            return total.toFixed(2);
+        }
+
+        function displaySubTotal() {
+            var mat = calculateTableColumnRaw('materials_table', 3, 'totalMaterials');
+            var prt = calculateTableColumnRaw('particulars_table', 1, 'totalParticulars');
+
+            var subTtl = parseFloat(mat) + parseFloat(prt);
+
+            $('#SubTotalField').val(subTtl.toFixed(2));
+        }
+
+        function displayTotalVat() {
+            var mat = calculateTableColumnRaw('materials_table', 4, 'totalMaterials');
+            var prt = calculateTableColumnRaw('particulars_table', 2, 'totalParticulars');
+
+            var vat = parseFloat(mat) + parseFloat(prt);
+
+            $('#TotalVatField').val(vat.toFixed(2));
+        }
+
+        function displayOverAllTotal() {
+            var subTtl = parseFloat($('#SubTotalField').val());
+            var vat = parseFloat($('#TotalVatField').val());
+            var total = subTtl + vat;
+            $('#TotalField').val(total.toFixed(2));
         }
     </script>
 @endpush

@@ -32,6 +32,8 @@
     <script>
         $(document).ready(function() {
 
+            fetchConsumers('');
+
             function fetchConsumers(query = '') {
                 $.ajax({
                     url : "{{ route('memberConsumers.fetch-member-consumers') }}",

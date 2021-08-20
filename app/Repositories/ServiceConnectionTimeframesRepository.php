@@ -2,27 +2,24 @@
 
 namespace App\Repositories;
 
-use App\Models\ServiceConnectionTotalPayments;
+use App\Models\ServiceConnectionTimeframes;
 use App\Repositories\BaseRepository;
 
 /**
- * Class ServiceConnectionTotalPaymentsRepository
+ * Class ServiceConnectionTimeframesRepository
  * @package App\Repositories
- * @version August 19, 2021, 5:53 am UTC
+ * @version August 19, 2021, 6:35 am UTC
 */
 
-class ServiceConnectionTotalPaymentsRepository extends BaseRepository
+class ServiceConnectionTimeframesRepository extends BaseRepository
 {
     /**
      * @var array
      */
     protected $fieldSearchable = [
         'ServiceConnectionId',
-        'SubTotal',
-        'Form2307TwoPercent',
-        'Form2307FivePercent',
-        'TotalVat',
-        'Total',
+        'UserId',
+        'Status',
         'Notes'
     ];
 
@@ -41,6 +38,6 @@ class ServiceConnectionTotalPaymentsRepository extends BaseRepository
      **/
     public function model()
     {
-        return ServiceConnectionTotalPayments::class;
+        return ServiceConnectionTimeframes::class;
     }
 }

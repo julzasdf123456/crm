@@ -14,7 +14,11 @@ use App\Models\ServiceConnections;
 use App\Models\ServiceConnectionInspections;
 use App\Models\ServiceConnectionMtrTrnsfrmr;
 use App\Models\ServiceConnectionPayTransaction;
+use App\Models\ServiceConnectionTotalPayments;
+use App\Models\ServiceConnectionTimeframes;
+use App\Models\IDGenerator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Flash;
 use Response;
 
@@ -67,6 +71,14 @@ class ServiceConnectionsController extends AppBaseController
 
         $serviceConnections = $this->serviceConnectionsRepository->create($input);
 
+        // CREATE Timeframes
+        $timeFrame = new ServiceConnectionTimeframes;
+        $timeFrame->id = IDGenerator::generateID();
+        $timeFrame->ServiceConnectionId = $input['id'];
+        $timeFrame->UserId = Auth::id();
+        $timeFrame->Status = 'Received';
+        $timeFrame->save();
+
         Flash::success('Service Connections saved successfully.');
 
         return redirect(route('serviceConnectionInspections.create-step-two', [$input['id']]));
@@ -111,6 +123,41 @@ class ServiceConnectionsController extends AppBaseController
 
         $serviceConnectionTransactions = ServiceConnectionPayTransaction::where('ServiceConnectionId', $id)->first();
 
+        $materialPayments = DB::table('CRM_ServiceConnectionMaterialPayments')
+                    ->join('CRM_ServiceConnectionMaterialPayables', 'CRM_ServiceConnectionMaterialPayments.Material', '=', 'CRM_ServiceConnectionMaterialPayables.id')
+                    ->select('CRM_ServiceConnectionMaterialPayments.id',
+                            'CRM_ServiceConnectionMaterialPayments.Quantity',
+                            'CRM_ServiceConnectionMaterialPayments.Vat',
+                            'CRM_ServiceConnectionMaterialPayments.Total',
+                            'CRM_ServiceConnectionMaterialPayables.Material',
+                            'CRM_ServiceConnectionMaterialPayables.Rate',)
+                    ->where('CRM_ServiceConnectionMaterialPayments.ServiceConnectionId', $id)
+                    ->get();
+
+        $particularPayments = DB::table('CRM_ServiceConnectionParticularPaymentsTransactions')
+                    ->join('CRM_ServiceConnectionPaymentParticulars', 'CRM_ServiceConnectionParticularPaymentsTransactions.Particular', '=', 'CRM_ServiceConnectionPaymentParticulars.id')
+                    ->select('CRM_ServiceConnectionParticularPaymentsTransactions.id',
+                            'CRM_ServiceConnectionParticularPaymentsTransactions.Amount',
+                            'CRM_ServiceConnectionParticularPaymentsTransactions.Vat',
+                            'CRM_ServiceConnectionParticularPaymentsTransactions.Total',
+                            'CRM_ServiceConnectionPaymentParticulars.Particular')
+                    ->where('CRM_ServiceConnectionParticularPaymentsTransactions.ServiceConnectionId', $id)
+                    ->get();
+
+        $totalTransactions = ServiceConnectionTotalPayments::where('ServiceConnectionId', $id)->first();
+
+        $timeFrame = DB::table('CRM_ServiceConnectionTimeframes')
+                ->join('users', 'CRM_ServiceConnectionTimeframes.UserId', '=', 'users.id')
+                ->select('CRM_ServiceConnectionTimeframes.id',
+                        'CRM_ServiceConnectionTimeframes.Status',
+                        'CRM_ServiceConnectionTimeframes.created_at',
+                        'CRM_ServiceConnectionTimeframes.ServiceConnectionId',
+                        'CRM_ServiceConnectionTimeframes.UserId',
+                        'users.name')
+                ->where('CRM_ServiceConnectionTimeframes.ServiceConnectionId', $id)
+                ->orderBy('created_at')
+                ->get();
+
         if (empty($serviceConnections)) {
             Flash::error('Service Connections not found');
 
@@ -120,7 +167,11 @@ class ServiceConnectionsController extends AppBaseController
         return view('service_connections.show', ['serviceConnections' => $serviceConnections, 
                                                 'serviceConnectionInspections' => $serviceConnectionInspections, 
                                                 'serviceConnectionMeter' => $serviceConnectionMeter, 
-                                                'serviceConnectionTransactions' => $serviceConnectionTransactions]);
+                                                'serviceConnectionTransactions' => $serviceConnectionTransactions,
+                                                'materialPayments' => $materialPayments,
+                                                'particularPayments' => $particularPayments,
+                                                'totalTransactions' => $totalTransactions,
+                                                'timeFrame' => $timeFrame]);
     }
 
     /**
@@ -244,7 +295,34 @@ class ServiceConnectionsController extends AppBaseController
                     ->orderBy('CRM_MemberConsumers.FirstName')
                     ->get();
             } else {
-                $data = [];
+                $data = DB::table('CRM_MemberConsumers')
+                    ->join('CRM_MemberConsumerTypes', 'CRM_MemberConsumers.MembershipType', '=', 'CRM_MemberConsumerTypes.Id')
+                    ->join('CRM_Barangays', 'CRM_MemberConsumers.Barangay', '=', 'CRM_Barangays.id')
+                    ->join('CRM_Towns', 'CRM_MemberConsumers.Town', '=', 'CRM_Towns.id')
+                    ->select('CRM_MemberConsumers.Id as ConsumerId',
+                                    'CRM_MemberConsumers.MembershipType as MembershipType', 
+                                    'CRM_MemberConsumers.FirstName as FirstName', 
+                                    'CRM_MemberConsumers.MiddleName as MiddleName', 
+                                    'CRM_MemberConsumers.LastName as LastName', 
+                                    'CRM_MemberConsumers.OrganizationName as OrganizationName', 
+                                    'CRM_MemberConsumers.Suffix as Suffix', 
+                                    'CRM_MemberConsumers.Birthdate as Birthdate', 
+                                    'CRM_MemberConsumers.Barangay as Barangay', 
+                                    'CRM_MemberConsumers.ApplicationStatus as ApplicationStatus',
+                                    'CRM_MemberConsumers.DateApplied as DateApplied', 
+                                    'CRM_MemberConsumers.CivilStatus as CivilStatus', 
+                                    'CRM_MemberConsumers.DateApproved as DateApproved', 
+                                    'CRM_MemberConsumers.ContactNumbers as ContactNumbers', 
+                                    'CRM_MemberConsumers.EmailAddress as EmailAddress',  
+                                    'CRM_MemberConsumers.Notes as Notes', 
+                                    'CRM_MemberConsumers.Gender as Gender', 
+                                    'CRM_MemberConsumers.Sitio as Sitio', 
+                                    'CRM_MemberConsumerTypes.*',
+                                    'CRM_Towns.Town as Town',
+                                    'CRM_Barangays.Barangay as Barangay')
+                    ->orderByDesc('CRM_MemberConsumers.created_at')
+                    ->take(10)
+                    ->get();
             }
 
             $total_row = $data->count();
@@ -357,7 +435,24 @@ class ServiceConnectionsController extends AppBaseController
                     ->orderBy('CRM_ServiceConnections.ServiceAccountName')
                     ->get();
             } else {
-                $data = [];
+                $data = DB::table('CRM_ServiceConnections')
+                    ->join('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')                    
+                    ->join('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                    ->join('CRM_ServiceConnectionAccountTypes', 'CRM_ServiceConnections.AccountType', '=', 'CRM_ServiceConnectionAccountTypes.id')
+                    ->select('CRM_ServiceConnections.id as ConsumerId',
+                                    'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                                    'CRM_ServiceConnections.Status as Status',
+                                    'CRM_ServiceConnections.DateOfApplication as DateOfApplication', 
+                                    'CRM_ServiceConnections.ContactNumber as ContactNumber', 
+                                    'CRM_ServiceConnections.EmailAddress as EmailAddress',  
+                                    'CRM_ServiceConnections.AccountCount as AccountCount',  
+                                    'CRM_ServiceConnections.Sitio as Sitio', 
+                                    'CRM_Towns.Town as Town',
+                                    'CRM_ServiceConnectionAccountTypes.AccountType as AccountType',
+                                    'CRM_Barangays.Barangay as Barangay')
+                    ->orderByDesc('CRM_ServiceConnections.created_at')
+                    ->take(10)
+                    ->get();
             }
 
             $total_row = $data->count();

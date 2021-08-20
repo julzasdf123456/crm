@@ -11,7 +11,7 @@ use App\Models\ServiceConnections;
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <span class="badge-lg text-white bg-warning"><strong>{{ $serviceConnections->Status }}</strong></span>
+                    <span class="badge-lg bg-warning">{{ $timeFrame->last()->Status; }}</span>
                 </div> 
                 <div class="col-sm-6">
                     <a class="btn btn-default float-right"
@@ -25,7 +25,8 @@ use App\Models\ServiceConnections;
 
     <div class="content px-3">
         <div class="row">
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-4 col-lg-4">
+                {{-- APPLICATON DETAILS --}}
                 <div class="card card-primary card-outline">
                     <div class="card-body box-profile">
                         <div class="text-center">
@@ -71,6 +72,49 @@ use App\Models\ServiceConnections;
                         <p class="text-muted">{{ $serviceConnections->Notes}}</p>
 
                         <a href="{{ route('serviceConnections.edit', [$serviceConnections->id]) }}" class="text-warning" title="Edit service connection details"><i class="fas fa-user-edit"></i></a>
+                    </div>
+                </div>
+
+                
+                {{-- TIMELINE --}}
+                <div class="card card-primary card-outline">
+                    <div class="card-header border-0">
+                        <h3 class="card-title">Timeframe</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-sm" data-card-widget="collapse" title="Collapse"><i class="fas fa-minus"></i></button>           
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="timeline timeline-inverse">
+                            @if ($timeFrame == null)
+                                <p><i>No timeframe recorded</i></p>
+                            @else
+                                @php
+                                    $timeframeCount = count($timeFrame);
+                                    $i = 0;
+                                @endphp
+                                @foreach ($timeFrame as $item)
+                                    <div class="time-label">
+                                        <span class="{{ $i+1==$timeframeCount ? 'bg-success' : 'bg-secondary' }}">
+                                            {{ $item->Status }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                    <i class="fas fa-info-circle bg-primary"></i>
+            
+                                    <div class="timeline-item">
+                                            <span class="time"><i class="far fa-clock"></i> {{ date('H:i A', strtotime($item->created_at)) }}</span>
+                
+                                            <h3 class="timeline-header"><a href="">{{ date('F d, Y', strtotime($item->created_at)) }}</a> by {{ $item->name }}</h3>
+                                        </div>
+                                    </div>
+                                    @php
+                                        $i++;
+                                    @endphp
+                                @endforeach
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

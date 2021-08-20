@@ -98,3 +98,6 @@ Route::resource('serviceConnectionPayTransactions', App\Http\Controllers\Service
 
 
 Route::resource('serviceConnectionTotalPayments', App\Http\Controllers\ServiceConnectionTotalPaymentsController::class);
+
+
+Route::resource('serviceConnectionTimeframes', App\Http\Controllers\ServiceConnectionTimeframesController::class);

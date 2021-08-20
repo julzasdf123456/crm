@@ -52,7 +52,13 @@
 
         .badge-lg {
             padding: 10px;
-            border-radius: 3px;
+            border-radius: 4px;
+            font-size: 0.9em !important;
+            margin-right: 25px;
+        }
+
+        .bg-disabled {
+            background:#878787;
             color: white;
         }
 

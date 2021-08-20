@@ -11,6 +11,7 @@ use App\Models\ServiceConnectionMatPayables;
 use App\Models\ServiceConnectionPayParticulars;
 use App\Models\ServiceConnectionMatPayments;
 use App\Models\ServiceConnections;
+use App\Models\ServiceConnectionTotalPayments;
 use Illuminate\Support\Facades\DB;
 use Flash;
 use Response;
@@ -205,10 +206,13 @@ class ServiceConnectionPayTransactionController extends AppBaseController
                     ->where('CRM_ServiceConnectionParticularPaymentsTransactions.ServiceConnectionId', $scId)
                     ->get();
 
+        $totalPayments = ServiceConnectionTotalPayments::where('ServiceConnectionId', $scId)->first();
+
         return view('service_connection_pay_transactions\create_step_four', ['serviceConnection' => $serviceConnection, 
                                                                             'materials' => $materials, 
                                                                             'particulars' => $particulars,
                                                                             'materialPayments' => $materialPayments,
-                                                                            'particularPayments' => $particularPayments]);
+                                                                            'particularPayments' => $particularPayments,
+                                                                            'totalPayments' => $totalPayments]);
     }
 }

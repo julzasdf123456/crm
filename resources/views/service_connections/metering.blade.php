@@ -83,9 +83,9 @@
         <h3 class="card-title">Transformer Details</h3>
         <div class="card-tools">
             @if($serviceConnectionMeter == null)
-                <a href="" class="btn btn-sm" title="Add Transformer Details"><i class="fas fa-plus-square"></i></a>
+                <a href="{{ route('serviceConnectionMtrTrnsfrmrs.create-step-three', [$serviceConnections->id]) }}" class="btn btn-sm" title="Add Transformer Details"><i class="fas fa-plus-square"></i></a>
             @else
-                <a href="" class="btn btn-sm" title="Update Transformer Details"><i class="fas fa-pen"></i></a>
+                <a href="{{ route('serviceConnectionMtrTrnsfrmrs.edit', [$serviceConnectionMeter->id]) }}" class="btn btn-sm" title="Update Transformer Details"><i class="fas fa-pen"></i></a>
                 <button type="button" class="btn btn-sm" data-card-widget="collapse" title="Collapse"><i class="fas fa-minus"></i></button>
             @endif  
         </div>
